@@ -9,6 +9,14 @@ export function getCustProduct() {
 }
 
 // 取得全部產品
+export function getCustomProduct() {
+  return request({
+    url: `/api/${process.env.VUE_APP_CUSTOMPATH}/products`,
+    method: "get"
+  });
+}
+
+// 取得全部產品
 export function getAllProduct() {
   return request({
     url: `/api/${process.env.VUE_APP_CUSTOMPATH}/admin/products`,

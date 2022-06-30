@@ -117,14 +117,14 @@
           <label for="useremail">Email</label>
           <Field type="email" class="form-control" name="email" id="useremail" v-model="form.user.email"
             placeholder="請輸入 Email" rules="required|email" />
-          <span class="text-danger" v-if="errors.email">信箱必須輸入</span>
+          <span class="text-danger" v-if="errors.hasOwnProperty('email')">信箱必須輸入</span>
         </div>
 
         <div class="form-group">
           <label for="username">收件人姓名</label>
           <Field type="text" class="form-control" name="name" id="username" v-model="form.user.name" rules="required"
             placeholder="輸入姓名" />
-          <span class="text-danger" v-if="errors.name">姓名必須輸入</span>
+          <span class="text-danger" v-if="errors.hasOwnProperty('name')">姓名必須輸入</span>
         </div>
 
         <div class="form-group">
@@ -136,7 +136,7 @@
           <label for="useraddress">收件人地址</label>
           <Field type="address" class="form-control" name="address" id="useraddress" v-model="form.user.address"
             rules="required" placeholder="請輸入地址" />
-          <span class="text-danger" v-if="errors.address">地址欄位不得留空</span>
+          <span class="text-danger" v-if="errors.hasOwnProperty('address')">地址欄位不得留空</span>
         </div>
 
         <div class="form-group">
@@ -157,7 +157,7 @@ import { getCustProduct, getSingleProduct } from "@/api/product";
 import { getCart, deleteCart, addCart } from "@/api/cart";
 import { addCoupon } from "@/api/coupons";
 import { createOrder } from "@/api/order";
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field, } from 'vee-validate';
 
 
 export default {
@@ -254,23 +254,23 @@ export default {
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
       const order = vm.form;
       vm.isLoading = true;
-      this.$validator.validate().then(result => {
-        if (result) {
-          createOrder(order).then(response => {
-            console.log("訂單已建立", response);
-            if (response.data.success) {
-              vm.$router.push(`/customer_checkout/${response.data.orderId}`);
-            }
-            // vm.getCart();
-            vm.isLoading = false;
-          });
-        } else {
-          console.log("欄位不完整");
-        }
-      });
+      // this.$validator.validate().then(result => {
+      //   if (result) {
+      //     createOrder(order).then(response => {
+      //       console.log("訂單已建立", response);
+      //       if (response.data.success) {
+      //         vm.$router.push(`/customer_checkout/${response.data.orderId}`);
+      //       }
+      //       // vm.getCart();
+      //       vm.isLoading = false;
+      //     });
+      //   } else {
+      //     console.log("欄位不完整");
+      //   }
+      // });
     }
   },
-  created() {
+  onMounted() {
     this.getProducts();
     this.getCart();
   }
