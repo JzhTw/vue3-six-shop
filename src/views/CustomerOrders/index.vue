@@ -187,16 +187,26 @@ export default {
     Field,
   },
   methods: {
-    getProducts() {
+
+  },
+  setup() {
+    getProducts();
+    getCart();
+
+
+
+
+    function getProducts() {
       const vm = this;
       // const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
       vm.isLoading = true;
       getCustProduct().then(response => {
+        console.log(getCustProduct)
         vm.products = response.data.products;
         vm.isLoading = false;
       });
-    },
-    getProduct(id) {
+    }
+    function getProduct(id) {
       const vm = this;
       vm.status.loadingItem = id;
       getSingleProduct(id).then(response => {
@@ -205,8 +215,8 @@ export default {
         console.log(response);
         vm.status.loadingItem = "";
       });
-    },
-    addtoCart(id, qty = 1) {
+    }
+    function addtoCart(id, qty = 1) {
       const vm = this;
       vm.status.loadingItem = id;
       const cart = {
@@ -218,8 +228,8 @@ export default {
         vm.getCart();
         $("#productModal").modal("hide");
       });
-    },
-    getCart() {
+    }
+    function getCart() {
       const vm = this;
       vm.isLoading = true;
       getCart().then(response => {
@@ -227,18 +237,18 @@ export default {
         console.log(response);
         vm.isLoading = false;
       });
-    },
+    }
     // 刪除購物車產品
-    removeCartItem(id) {
+    function removeCartItem(id) {
       const vm = this;
       vm.isLoading = true;
       deleteCart(id).then(() => {
         vm.getCart();
         vm.isLoading = false;
       });
-    },
+    }
     // 新增優惠卷
-    addCouponCode() {
+    function addCouponCode() {
       const vm = this;
       const coupon = {
         code: vm.coupon_code
@@ -248,8 +258,8 @@ export default {
         vm.getCart();
         vm.isLoading = false;
       });
-    },
-    createOrder() {
+    }
+    function createOrder() {
       const vm = this;
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
       const order = vm.form;
@@ -269,10 +279,6 @@ export default {
       //   }
       // });
     }
-  },
-  onMounted() {
-    this.getProducts();
-    this.getCart();
   }
 };
 </script>
