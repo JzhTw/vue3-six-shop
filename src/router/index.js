@@ -1,25 +1,80 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+// import Vue from "vue";
+// import Router from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
+import Products from "../views/Products";
+import Coupons from "../views/Coupons";
+import Orders from "../views/Orders";
+import Login from "../views/Login";
+import CustomerOrder from "../views/CustomerOrders";
+import CustomerCheckout from "../views/CustomerCheckout";
+import Dashboard from "../components/Dashboard";
 
-const routes = [
+
+// Vue.use(Router);
+
+const constantRouterMap = [
+  // {
+  //   path: "/:catchAll(.*)",
+  //   redirect: "login"
+  // },
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: "/login",
+    name: "Login",
+    component: Login
   },
+
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: "/admin",
+    name: "admin",
+    component: Dashboard,
+    children: [
+      {
+        path: "products",
+        name: "Products",
+        component: Products,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: "coupons",
+        name: "Coupons",
+        component: Coupons,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: "orders",
+        name: "Orders",
+        component: Orders,
+        meta: { requiresAuth: true }
+      }
+    ]
+  },
+
+  {
+    path: "/",
+    name: "Dashboard",
+    component: Dashboard,
+    children: [
+      {
+        path: "customer_order",
+        name: "CustomerOrder",
+        component: CustomerOrder
+      },
+      {
+        path: "customer_checkout/:orderId",
+        name: "CustomerCheckout",
+        component: CustomerCheckout
+      }
+    ]
   }
-]
+];
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+// export default new Router({
+//   scrollBehavior: () => ({ y: 0 }),
+//   routes: constantRouterMap
+// });
 
-export default router
+export const router = createRouter({
+  history: createWebHistory(),
+  routes: constantRouterMap
+});
+
