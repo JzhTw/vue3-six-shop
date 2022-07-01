@@ -8,7 +8,8 @@ import { defineRule } from 'vee-validate';
 import { required, email } from '@vee-validate/rules';
 defineRule('required', required);
 defineRule('email', email);
-const app = createApp(App).use();
+
+const app = createApp(App);
 app.use(store);
 app.use(router);
 
