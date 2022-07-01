@@ -7,7 +7,7 @@ import "bootstrap";
 import { defineRule } from 'vee-validate';
 import { required, email } from '@vee-validate/rules';
 defineRule('required', required);
-defineRule('email',email);
+defineRule('email', email);
 const app = createApp(App).use();
 app.use(store);
 app.use(router);
@@ -29,16 +29,16 @@ app.mount('#app');
 
 router.beforeEach((to, from, next) => {
     console.log('to', to, 'from', from, 'next', next);
-    // ...
     if (to.meta.requiresAuth) {
-        const api = `${process.env.APIPATH}/api/user/check`;
         if (to.meta.requiresAuth) {
             // 確認身份
             check().then(response => {
+                console.log(response)
                 if (response.data.success) {
                     next();
                 } else {
-                    next({ path: `/login` }); // 否則全部到Login
+                    console.log('請重新登入')
+                    router.push('/login')
                 }
             })
         } else {

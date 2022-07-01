@@ -13,10 +13,10 @@ import Dashboard from "../components/Dashboard";
 // Vue.use(Router);
 
 const constantRouterMap = [
-  // {
-  //   path: "/:catchAll(.*)",
-  //   redirect: "login"
-  // },
+  {
+    path: "/:catchAll(.*)",
+    redirect: "login"
+  },
   {
     path: "/login",
     name: "Login",

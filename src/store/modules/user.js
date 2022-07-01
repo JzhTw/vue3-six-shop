@@ -1,13 +1,18 @@
-import { login, logout, getInfo , check} from '@/api/user';
+import { login, logout, getInfo} from '@/api/user';
 const user = {
   state: {
-    name: '',
+    uid: '',
+    token:''
   },
 
   mutations: {
     // 名字
-    SET_NAME: (state, name) => {
-      state.name = name;
+    SET_UID: (state, name) => {
+      state.uid = name;
+    },
+    // 名字
+    SET_TOKEN: (state, name) => {
+      state.token = name;
     }
   },
 
@@ -17,21 +22,9 @@ const user = {
       return new Promise((resolve, reject) => {
         login(data.username, data.password).then(response => {
           const data = response.data;
-          commit('SET_NAME', data.name)
+          commit('SET_UID', data.uid)
+          commit('SET_TOKEN', data.token)
           resolve(response);
-        }).catch(error => {
-          reject(error);
-        });
-      });
-    },
-    // Check
-    Check({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        check(state.token).then(() => {
-          commit('SET_TOKEN', '');
-          commit('SET_ROLES', []);
-          // removeToken();
-          resolve();
         }).catch(error => {
           reject(error);
         });

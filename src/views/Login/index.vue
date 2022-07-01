@@ -25,7 +25,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      loading: false,
       user: {
         username: '',
         password: '',
@@ -42,9 +41,7 @@ export default {
   },
   methods: {
     signin() {
-      const api = `${process.env.APIPATH}/signin`;
       const vm = this;
-      this.loading = true;
       let data = {
         username: vm.user.email,
         password: vm.user.password
@@ -53,7 +50,6 @@ export default {
       this.$store
         .dispatch("Login", data)
         .then((res) => {
-          this.loading = false;
           // 新增到cookie
           const token = res.data.token;
           const expired = res.data.expired;
@@ -64,7 +60,6 @@ export default {
           }
         })
         .catch(() => {
-          this.loading = false;
         });
     },
   },

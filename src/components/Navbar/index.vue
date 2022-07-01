@@ -8,7 +8,7 @@
     <input class="form-control form-control-dark w-100" type="text" placeholder="請輸入搜尋文字......" aria-label="Search">
     <div class="navbar-nav">
       <div class="nav-item text-nowrap">
-        <a class="nav-link px-3" href="#">登出</a>
+        <a class="nav-link px-3" href="#" @click.prevent="signout">登出</a>
       </div>
     </div>
   </header>
@@ -17,6 +17,7 @@
 <script>
 import $ from 'jquery';
 import { logout } from '@/api/user';
+
 export default {
   name: 'NavBar',
   methods: {
@@ -24,17 +25,10 @@ export default {
       const vm = this;
       logout().then((response) => {
         if (response.data.success) {
-          vm.$router.push('/signin');
+          vm.$router.push('/login');
         }
       });
     },
-  },
-  created() {
-    $(document).ready(function () {
-      $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').toggleClass('active');
-      });
-    });
   }
 };
 </script>

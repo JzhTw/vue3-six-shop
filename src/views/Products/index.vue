@@ -11,7 +11,7 @@
           <th width="120">原價</th>
           <th width="120">售價</th>
           <th width="100">是否啟用</th>
-          <th width="80">編輯</th>
+          <th width="150">編輯</th>
         </tr>
       </thead>
       <tbody>
@@ -25,9 +25,9 @@
             <span v-else>未啟用</span>
           </td>
           <td>
-            <div class="btn-group">
-              <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
-              <button class="btn btn-outline-danger btn-sm" @click="openDelProductModal(item)">刪除</button>
+            <div class="btn-group" >
+              <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
+              <button type="button" class="btn btn-outline-danger btn-sm" @click="openDelProductModal(item)">刪除</button>
             </div>
           </td>
         </tr>
@@ -149,6 +149,7 @@
 <script>
 import $ from "jquery";
 import Pagination from "@/components/Pagination";
+import axios from 'axios';
 import {
   getProduct,
   delProduct,
@@ -252,13 +253,13 @@ export default {
       const vm = this;
       const formData = new FormData();
       formData.append("file-to-upload", uploadedFile);
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH
-        }/admin/upload`;
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/upload`;
       vm.status.fileUploading = true;
-      this.$http
-        .post(url, formData, {
+      const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+      axios.post(url, formData, {
           headers: {
-            "Content-Type": "multipart/form-data"
+            "Content-Type": "multipart/form-data",
+            "Authorization":`${token}`
           }
         })
         .then(response => {

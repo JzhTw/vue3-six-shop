@@ -30,15 +30,12 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog" role="document">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <img :src="product.image" class="img-fluid" alt>
@@ -78,10 +75,14 @@
             <th>單價</th>
           </thead>
           <tbody>
-            <!-- <tr v-for="item in cart.carts" :key="item.id" v-if="cart.carts">
+            <tr v-for="item in cart.carts" :key="item.id">
               <td class="align-middle">
                 <button type="button" class="btn btn-outline-danger btn-sm" @click="removeCartItem(item.id)">
-                  <i class="far fa-trash-alt"></i>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                  </svg>
                 </button>
               </td>
               <td class="align-middle">
@@ -90,7 +91,7 @@
               </td>
               <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
               <td class="align-middle text-right">{{ item.final_total }}</td>
-            </tr> -->
+            </tr>
           </tbody>
           <tfoot>
             <tr>
@@ -153,11 +154,12 @@
 
 <script>
 import $ from "jquery";
-import { getCustProduct, getSingleProduct } from "@/api/product";
+import { getCustomProduct, getSingleProduct } from "@/api/product";
 import { getCart, deleteCart, addCart } from "@/api/cart";
 import { addCoupon } from "@/api/coupons";
 import { createOrder } from "@/api/order";
 import { Form, Field, } from 'vee-validate';
+import { Modal } from 'bootstrap';
 
 
 export default {
@@ -166,7 +168,7 @@ export default {
       products: [],
       product: {},
       status: {
-        loadingItem: ""
+        loadingItem: "" //暫存物品
       },
       form: {
         user: {
@@ -179,7 +181,8 @@ export default {
       },
       cart: {},
       isLoading: false,
-      coupon_code: ""
+      coupon_code: "",
+
     };
   },
   components: {
@@ -190,10 +193,11 @@ export default {
     getProducts() {
       const vm = this;
       // const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
-      vm.isLoading = true;
-      getCustProduct().then(response => {
+      // getCustProduct().then(response => {
+      //   vm.products = response.data.products;
+      // });
+      getCustomProduct().then(response => {
         vm.products = response.data.products;
-        vm.isLoading = false;
       });
     },
     getProduct(id) {
@@ -201,8 +205,8 @@ export default {
       vm.status.loadingItem = id;
       getSingleProduct(id).then(response => {
         vm.product = response.data.product;
-        $("#productModal").modal("show");
-        console.log(response);
+        // $("#productModal").modal("show");
+        vm.productModal.show();
         vm.status.loadingItem = "";
       });
     },
@@ -216,25 +220,20 @@ export default {
       addCart(cart).then(response => {
         vm.status.loadingItem = "";
         vm.getCart();
-        $("#productModal").modal("hide");
+        vm.productModal.hide();
       });
     },
     getCart() {
       const vm = this;
-      vm.isLoading = true;
       getCart().then(response => {
         vm.cart = response.data.data;
-        console.log(response);
-        vm.isLoading = false;
       });
     },
     // 刪除購物車產品
     removeCartItem(id) {
       const vm = this;
-      vm.isLoading = true;
       deleteCart(id).then(() => {
         vm.getCart();
-        vm.isLoading = false;
       });
     },
     // 新增優惠卷
@@ -243,17 +242,14 @@ export default {
       const coupon = {
         code: vm.coupon_code
       };
-      vm.isLoading = true;
       addCoupon(coupon).then(() => {
         vm.getCart();
-        vm.isLoading = false;
       });
     },
     createOrder() {
       const vm = this;
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
       const order = vm.form;
-      vm.isLoading = true;
       // this.$validator.validate().then(result => {
       //   if (result) {
       //     createOrder(order).then(response => {
@@ -270,7 +266,11 @@ export default {
       // });
     }
   },
-  onMounted() {
+  mounted() {
+    const vm = this;
+    vm.productModal = new Modal(document.getElementById('productModal'));
+  },
+  created() {
     this.getProducts();
     this.getCart();
   }
