@@ -30,21 +30,17 @@ app.mount('#app');
 router.beforeEach((to, from, next) => {
     console.log('to', to, 'from', from, 'next', next);
     if (to.meta.requiresAuth) {
-        if (to.meta.requiresAuth) {
-            // 確認身份
-            check().then(response => {
-                console.log(response)
-                if (response.data.success) {
-                    next();
-                } else {
-                    console.log('請重新登入')
-                    router.push('/login')
-                }
-            })
-        } else {
-            next();
-        }
-
+        // 確認身份
+        check().then(response => {
+            console.log(response)
+            if (response.data.success) {
+                next();
+            } else {
+                console.log('請重新登入')
+                router.push('/login')
+            }
+        })
+    } else {
+        next();
     }
-    next();
 });
