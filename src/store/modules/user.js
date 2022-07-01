@@ -1,4 +1,4 @@
-import { login, logout, getInfo} from '@/api/user';
+import { login, logout } from '@/api/user';
 const user = {
   state: {
     uid: '',
@@ -24,24 +24,6 @@ const user = {
           const data = response.data;
           commit('SET_UID', data.uid)
           commit('SET_TOKEN', data.token)
-          resolve(response);
-        }).catch(error => {
-          reject(error);
-        });
-      });
-    },
-    // 獲取用戶訊息
-    GetInfo({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data;
-          if (data.roles && data.roles.length > 0) { // 驗證返回的roles是否是一個非空陣列
-            commit('SET_ROLES', data.roles);
-          } else {
-            reject('getInfo: roles must be a non-null array !');
-          }
-          commit('SET_NAME', data.name);
-          commit('SET_AVATAR', data.avatar);
           resolve(response);
         }).catch(error => {
           reject(error);

@@ -25,7 +25,7 @@
             <span v-else>未啟用</span>
           </td>
           <td>
-            <div class="btn-group" >
+            <div class="btn-group">
               <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
               <button type="button" class="btn btn-outline-danger btn-sm" @click="openDelProductModal(item)">刪除</button>
             </div>
@@ -61,7 +61,7 @@
                   </label>
                   <input type="file" id="customFile" class="form-control" ref="files" @change="uploadFile">
                 </div>
-                <img class="img-fluid" :src="tempProduct.imageUrl" alt>
+                <img class="img-fluid" :src="tempProduct.image" alt>
               </div>
               <div class="col-sm-8">
                 <div class="form-group">
@@ -167,7 +167,9 @@ export default {
       isLoading: false,
       status: {
         fileUploading: false
-      }
+      },
+      productModal: null,
+      delProductModal: null
     };
   },
   components: {
@@ -187,6 +189,7 @@ export default {
       });
     },
     openModal(isNew, item) {
+      const vm = this;
       if (isNew) {
         this.tempProduct = {};
         this.isNew = true;
@@ -194,22 +197,20 @@ export default {
         this.tempProduct = Object.assign({}, item);
         this.isNew = false;
       }
-      const productModal = new Modal(document.getElementById('productModal'))
-      productModal.show();
+      vm.productModal.show();
 
     },
     updateProduct() {
       const vm = this;
-      const productModal = new Modal(document.getElementById('productModal'))
       // 新增
       if (!vm.isNew) {
         updateProduct(vm.tempProduct).then(response => {
           console.log(response.data);
           if (response.data.success) {
-            productModal.hide();
+            vm.productModal.hide();
             vm.getProducts();
           } else {
-            productModal.hide();
+            vm.productModal.hide();
             vm.getProducts();
             console.log("更新失敗");
           }
@@ -220,10 +221,10 @@ export default {
         createProduct(vm.tempProduct).then(response => {
           console.log(response.data);
           if (response.data.success) {
-            productModal.hide();
+            vm.productModal.hide();
             vm.getProducts();
           } else {
-            productModal.hide();
+            vm.productModal.hide();
             vm.getProducts();
             console.log("新增失敗");
           }
@@ -233,17 +234,14 @@ export default {
     },
     openDelProductModal(item) {
       const vm = this;
-      const delProductModal = new Modal(document.getElementById('delProductModal'));
-
-      delProductModal.show();
+      vm.delProductModal.show();
       vm.tempProduct = Object.assign({}, item);
     },
     delProduct() {
       const vm = this;
       const delProductModal = new Modal(document.getElementById('delProductModal'));
       delProduct(vm.tempProduct.id).then(response => {
-        delProductModal.hide();
-        vm.isLoading = false;
+        vm.delProductModal.hide();
         this.getProducts();
       });
     },
@@ -257,18 +255,18 @@ export default {
       vm.status.fileUploading = true;
       const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
       axios.post(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "Authorization":`${token}`
-          }
-        })
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `${token}`
+        }
+      })
         .then(response => {
           console.log(response.data);
           vm.status.fileUploading = false;
           if (response.data.success) {
             // vm.tempProduct.imageUrl = response.data.imageUrl;
             // console.log(vm.tempProduct);
-            vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
+            vm.$set(vm.tempProduct, "imageUrl", response.data.image);
           } else {
             this.$bus.$emit("messsage:push", response.data.message, "danger");
           }
@@ -276,7 +274,13 @@ export default {
     }
   },
   created() {
-    this.getProducts();
+    const vm = this;
+    vm.getProducts();
+  },
+  mounted() {
+    const vm = this;
+    vm.productModal = new Modal(document.getElementById('productModal'))
+    vm.delProductModal = new Modal(document.getElementById('delProductModal'))
   }
 };
 </script>

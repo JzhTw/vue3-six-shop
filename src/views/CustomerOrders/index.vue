@@ -182,7 +182,7 @@ export default {
       cart: {},
       isLoading: false,
       coupon_code: "",
-
+      productModal: null
     };
   },
   components: {
