@@ -1,7 +1,7 @@
 <template>
   <div>
     <table class="table table-striped">
-      <thead >
+      <thead>
         <tr>
           <th scope="col">購買時間</th>
           <th scope="col">名字</th>
@@ -11,8 +11,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, key) in sortOrder" :key="key" v-if="orders.length" :class="{ 'text-secondary': !item.is_paid }">
-          <td>{{ item.create_at | date }}</td>
+        <tr v-for="(item, key) in orders" :key="key" v-if="orders.length" :class="{ 'text-secondary': !item.is_paid }">
+          <td>{{ $filters.date(item.create_at) }}</td>
           <td>
             <span v-text="item.user.name" v-if="item.user"></span>
           </td>
@@ -24,7 +24,7 @@
               </li>
             </ul>
           </td>
-          <td class="text-right">{{ item.total | currency }}</td>
+          <td class="text-right">{{ $filters.currency(item.total) }}</td>
           <td>
             <strong v-if="item.is_paid" class="text-success">已付款</strong>
             <span v-else class="text-muted">尚未起用</span>
@@ -43,10 +43,10 @@ import { getOrder } from '@/api/order';
 export default {
   data() {
     return {
-      orders: {},
+      orders: [],
       isNew: false,
       pagination: {},
-      isLoading: false
+      newOrder: []
     };
   },
   components: {
@@ -55,32 +55,29 @@ export default {
   methods: {
     getOrders(currentPage = 1) {
       const vm = this;
-      vm.isLoading = true;
       getOrder(currentPage).then(response => {
         console.log(response);
         vm.orders = response.data.orders;
         vm.pagination = response.data.pagination;
-        vm.isLoading = false;
       });
     }
   },
-  computed: {
-    // sortOrder() {
-    //   const vm = this;
-    //   let newOrder = [];
-    //   if (vm.orders.length) {
-    //     newOrder = vm.orders.sort((a, b) => {
-    //       const aIsPaid = a.is_paid ? 1 : 0;
-    //       const bIsPaid = b.is_paid ? 1 : 0;
-    //       return bIsPaid - aIsPaid;
-    //     });
-    //   }
-    //   return newOrder;
-    // }
+  watch: {
+    orders: {
+      handler(val) {
+        if (val.length) {
+          val.sort((a, b) => {
+            const aIsPaid = a.is_paid ? 1 : 0;
+            const bIsPaid = b.is_paid ? 1 : 0;
+            return bIsPaid - aIsPaid;
+          });
+        }
+      }
+
+    }
   },
   created() {
     this.getOrders();
-    console.log(process.env.APIPATH);
   }
 };
 </script>

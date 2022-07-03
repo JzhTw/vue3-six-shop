@@ -41,7 +41,7 @@ export function createCoupon(data) {
 // 新建優惠卷
 export function addCoupon(data) {
   return request({
-    url: `/api/${process.env.VUE_APP_COUSTOMPATH}/coupon`,
+    url: `/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`,
     method: "post",
     data: {
       data: {

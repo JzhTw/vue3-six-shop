@@ -68,11 +68,6 @@ const constantRouterMap = [
   }
 ];
 
-// export default new Router({
-//   scrollBehavior: () => ({ y: 0 }),
-//   routes: constantRouterMap
-// });
-
 export const router = createRouter({
   history: createWebHistory(),
   routes: constantRouterMap

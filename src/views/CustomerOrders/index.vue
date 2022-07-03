@@ -30,41 +30,6 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <img :src="product.image" class="img-fluid" alt>
-            <blockquote class="blockquote mt-3">
-              <p class="mb-0">{{ product.content }}</p>
-              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
-            </blockquote>
-            <div class="d-flex justify-content-between align-items-baseline">
-              <div class="h4" v-if="!product.price">{{ product.origin_price }} 元</div>
-              <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
-              <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
-            </div>
-            <select name class="form-control mt-3" v-model="product.num">
-              <option :value="num" v-for="num in 10" :key="num">選購 {{ num }} {{ product.unit }}</option>
-            </select>
-          </div>
-          <div class="modal-footer">
-            <div class="text-muted text-nowrap mr-3">
-              小計
-              <strong>{{ product.num * product.price }}</strong> 元
-            </div>
-            <button type="button" class="btn btn-primary" @click="addtoCart(product.id, product.num)">
-              <i class="fas fa-spinner fa-spin" v-if="product.id === status.loadingItem"></i>
-              加到購物車
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="my-5 row justify-content-center">
       <div class="col-md-6">
         <table class="table">
@@ -113,7 +78,7 @@
       </div>
     </div>
     <div class="my-5 row justify-content-center">
-      <Form class="col-md-6" @submit.prevent="createOrder" v-slot="{ errors }">
+      <Form class="col-md-6" @submit="createOrder" v-slot="{ errors }">
         <div class="form-group">
           <label for="useremail">Email</label>
           <Field type="email" class="form-control" name="email" id="useremail" v-model="form.user.email"
@@ -148,6 +113,41 @@
           <button class="btn btn-danger">送出訂單</button>
         </div>
       </Form>
+    </div>
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <img :src="product.image" class="img-fluid" alt>
+            <blockquote class="blockquote mt-3">
+              <p class="mb-0">{{ product.content }}</p>
+              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
+            </blockquote>
+            <div class="d-flex justify-content-between align-items-baseline">
+              <div class="h4" v-if="!product.price">{{ product.origin_price }} 元</div>
+              <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
+              <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
+            </div>
+            <select name class="form-control mt-3" v-model="product.num">
+              <option :value="num" v-for="num in 10" :key="num">選購 {{ num }} {{ product.unit }}</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <div class="text-muted text-nowrap mr-3">
+              小計
+              <strong>{{ product.num * product.price }}</strong> 元
+            </div>
+            <button type="button" class="btn btn-primary" @click="addtoCart(product.id, product.num)">
+              <i class="fas fa-spinner fa-spin" v-if="product.id === status.loadingItem"></i>
+              加到購物車
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -190,6 +190,7 @@ export default {
     Field,
   },
   methods: {
+    // 取得所有產品
     getProducts() {
       const vm = this;
       // const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
@@ -200,6 +201,7 @@ export default {
         vm.products = response.data.products;
       });
     },
+    // 取得產品(單)
     getProduct(id) {
       const vm = this;
       vm.status.loadingItem = id;
@@ -210,6 +212,7 @@ export default {
         vm.status.loadingItem = "";
       });
     },
+    // 新增購物車
     addtoCart(id, qty = 1) {
       const vm = this;
       vm.status.loadingItem = id;
@@ -223,6 +226,7 @@ export default {
         vm.productModal.hide();
       });
     },
+    // 取得購物車
     getCart() {
       const vm = this;
       getCart().then(response => {
@@ -246,24 +250,19 @@ export default {
         vm.getCart();
       });
     },
+    // 新增訂單
     createOrder() {
       const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
       const order = vm.form;
-      // this.$validator.validate().then(result => {
-      //   if (result) {
-      //     createOrder(order).then(response => {
-      //       console.log("訂單已建立", response);
-      //       if (response.data.success) {
-      //         vm.$router.push(`/customer_checkout/${response.data.orderId}`);
-      //       }
-      //       // vm.getCart();
-      //       vm.isLoading = false;
-      //     });
-      //   } else {
-      //     console.log("欄位不完整");
-      //   }
-      // });
+      console.log('test')
+      createOrder(order).then(response => {
+        console.log("訂單已建立", response);
+        if (response.data.success) {
+          vm.$router.push(`/customer_checkout/${response.data.orderId}`);
+        }
+        // vm.getCart();
+        vm.isLoading = false;
+      });
     }
   },
   mounted() {
