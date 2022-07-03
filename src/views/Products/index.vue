@@ -3,47 +3,47 @@
     <div class="text-right mt-4">
       <button class="btn btn-primary" @click="openModal(true)">建立新的產品</button>
     </div>
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th width="120">分類</th>
-          <th>產品名稱</th>
-          <th width="120">原價</th>
-          <th width="120">售價</th>
-          <th width="100">是否啟用</th>
-          <th width="150">編輯</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item) in products" :key="item.id">
-          <td>{{ item.category }}</td>
-          <td>{{ item.title }}</td>
-          <td class="text-right">{{ $filters.currency(item.origin_price) }}</td>
-          <td class="text-right">{{ $filters.currency(item.price) }}</td>
-          <td>
-            <span v-if="item.is_enabled" class="text-success">啟用</span>
-            <span v-else>未啟用</span>
-          </td>
-          <td>
-            <div class="btn-group">
-              <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
-              <button type="button" class="btn btn-outline-danger btn-sm" @click="openDelProductModal(item)">刪除</button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th width="120">分類</th>
+            <th>產品名稱</th>
+            <th width="120">原價</th>
+            <th width="120">售價</th>
+            <th width="100">是否啟用</th>
+            <th width="150">編輯</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item) in products" :key="item.id">
+            <td>{{ item.category }}</td>
+            <td>{{ item.title }}</td>
+            <td class="text-right">{{ $filters.currency(item.origin_price) }}</td>
+            <td class="text-right">{{ $filters.currency(item.price) }}</td>
+            <td>
+              <span v-if="item.is_enabled" class="text-success">啟用</span>
+              <span v-else>未啟用</span>
+            </td>
+            <td>
+              <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                  @click="openDelProductModal(item)">刪除</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <Pagination :pages="pagination" @emitPages="getProducts"></Pagination>
     <!-- Modal -->
-    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content border-0">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
           <div class="modal-header bg-dark text-white">
-            <h5 class="modal-title" id="exampleModalLabel">
-              <span>新增產品</span>
-            </h5>
+            <h5 class="modal-title" id="exampleModalLabel">新增產品</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -61,7 +61,7 @@
                   </label>
                   <input type="file" id="customFile" class="form-control" ref="files" @change="uploadFile">
                 </div>
-                <img class="img-fluid" :src="tempProduct.image" alt>
+                <img class="img-fluid" :src="tempProduct.imageUrl" alt>
               </div>
               <div class="col-sm-8">
                 <div class="form-group">
@@ -98,12 +98,12 @@
                 <div class="form-group">
                   <label for="description">產品描述</label>
                   <textarea type="text" class="form-control" id="description" v-model="tempProduct.description"
-                    placeholder="請輸入產品描述"></textarea>
+                    placeholder="請輸入產品描述" rows="5"></textarea>
                 </div>
                 <div class="form-group">
                   <label for="content">說明內容</label>
                   <textarea type="text" class="form-control" id="content" v-model="tempProduct.content"
-                    placeholder="請輸入產品說明內容"></textarea>
+                    placeholder="請輸入產品說明內容" rows="5"></textarea>
                 </div>
                 <div class="form-group">
                   <div class="form-check">
@@ -116,14 +116,13 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
             <button type="button" class="btn btn-primary" @click="updateProduct">確認</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="modal fade" id="delProductModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
+    <div class="modal fade" id="delProductModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content border-0">
           <div class="modal-header bg-danger text-white">
@@ -137,7 +136,7 @@
             <strong class="text-danger">{{ tempProduct.title }}</strong> 商品(刪除後將無法恢復)。
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
             <button type="button" class="btn btn-danger" @click="delProduct">確認刪除</button>
           </div>
         </div>
@@ -176,6 +175,7 @@ export default {
     Pagination
   },
   methods: {
+    // 取得所有產品(頁數)
     getProducts(page = 1) {
       const vm = this;
       vm.isLoading = true;
@@ -188,6 +188,7 @@ export default {
         }
       });
     },
+    // 新增產品&更新產品modal窗
     openModal(isNew, item) {
       const vm = this;
       if (isNew) {
@@ -200,6 +201,7 @@ export default {
       vm.productModal.show();
 
     },
+    // 更新產品
     updateProduct() {
       const vm = this;
       // 新增
@@ -232,11 +234,13 @@ export default {
         });
       }
     },
+    // 確認是否刪除產品
     openDelProductModal(item) {
       const vm = this;
       vm.delProductModal.show();
       vm.tempProduct = Object.assign({}, item);
     },
+    // 刪除圖片
     delProduct() {
       const vm = this;
       const delProductModal = new Modal(document.getElementById('delProductModal'));
@@ -245,6 +249,7 @@ export default {
         this.getProducts();
       });
     },
+    // 上傳圖片
     uploadFile() {
       console.log(this);
       const uploadedFile = this.$refs.files.files[0];
@@ -264,9 +269,7 @@ export default {
           console.log(response.data);
           vm.status.fileUploading = false;
           if (response.data.success) {
-            // vm.tempProduct.imageUrl = response.data.imageUrl;
-            // console.log(vm.tempProduct);
-            vm.$set(vm.tempProduct, "imageUrl", response.data.image);
+            vm.tempProduct.imageUrl = response.data.imageUrl;
           } else {
             this.$bus.$emit("messsage:push", response.data.message, "danger");
           }

@@ -22,7 +22,7 @@
           <td>{{ $filters.date(item.due_date) }}</td>
           <td>
             <span v-if="item.is_enabled === 1" class="text-success">啟用</span>
-            <span v-else class="text-muted">未啟用</span>
+            <span v-else class="text-danger">未啟用</span>
           </td>
           <td>
             <button class="btn btn-outline-primary btn-sm" @click="openCouponModal(false, item)">編輯</button>
@@ -30,15 +30,13 @@
         </tr>
       </tbody>
     </table>
-    <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog" role="document">
+
+    <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+          <div class="modal-header bg-dark text-white">
+            <h5 class="modal-title" id="exampleModalLabel">新增優惠卷</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -68,17 +66,17 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="updateCoupon">更新優惠券</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            <button type="button" class="btn btn-primary" @click="updateCoupon">儲存</button>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
-import $ from 'jquery';
 import { getCoupons, updateCoupon, createCoupon } from '@/api/coupons';
 import { Modal } from 'bootstrap';
 export default {
@@ -97,7 +95,6 @@ export default {
       },
       due_date: new Date(),
       isNew: false,
-      isLoading: false,
       couponModal: null,
     };
   },
@@ -105,17 +102,21 @@ export default {
     due_date() {
       const vm = this;
       const timestamp = Math.floor(new Date(vm.due_date) / 1000);
+      console.log(timestamp);
       vm.tempCoupon.due_date = timestamp;
     },
   },
   methods: {
+    // 打開Modal
     openCouponModal(isNew, item) {
       const vm = this;
       vm.couponModal.show();
       vm.isNew = isNew;
       if (vm.isNew) {
         vm.tempCoupon = {};
+        vm.due_date = '';
       } else {
+        console.log(item)
         vm.tempCoupon = Object.assign({}, item);
         const dateAndTime = new Date(vm.tempCoupon.due_date * 1000).toISOString().split('T');
         vm.due_date = dateAndTime[0];
@@ -124,9 +125,7 @@ export default {
     //取得優惠卷
     getCoupons() {
       const vm = this;
-      vm.isLoading = true;
       getCoupons(vm.tempCoupon).then((response) => {
-        vm.isLoading = false;
         vm.coupons = response.data.coupons;
         console.log(response)
       });
@@ -134,21 +133,17 @@ export default {
     // 更新＆＆新建
     updateCoupon() {
       const vm = this;
-      vm.isLoading = true;
       //新增優惠卷
       if (vm.isNew) {
         createCoupon(vm.tempCoupon).then((response) => {
-          vm.isLoading = false;
           console.log(response, vm.tempCoupon);
           vm.couponModal.hide();
           this.getCoupons();
         });
       } else {
         //更新優惠卷
-        vm.due_date = new Date(vm.tempCoupon.due_date * 1000);
-        console.log(vm.tempCoupon)
+        new Date(vm.tempCoupon.due_date * 1000);
         updateCoupon(vm.tempCoupon).then((response) => {
-          vm.isLoading = false;
           vm.couponModal.hide();
           this.getCoupons();
         });

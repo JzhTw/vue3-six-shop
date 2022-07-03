@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="row mt-4">
-      <div class="col-md-4 mb-4" v-for="item in products" :key="item.id">
+      <div class="col-md-2 mb-2" v-for="item in products" :key="item.id">
         <div class="card border-0 shadow-sm">
-          <div style="height: 150px; background-size: cover; background-position: center"
-            :style="{ backgroundImage: `url(${item.image})` }"></div>
+          <div style="height: 516px; background-size: cover; background-position: center"
+            :style="{ backgroundImage: `url(${item.imageUrl})` }"></div>
           <div class="card-body">
             <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
             <h5 class="card-title">
